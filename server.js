@@ -55,10 +55,10 @@ var __dirname = path.resolve()
 app.use('/upload', express.static(path.join(__dirname, '/upload')))
 // app.use('/Selfie', express.static(path.join(__dirname, '/Selfie')))
 
-app.use("/api/v1/comp/dynamo", dynamoroutes);
+app.use("/api/v1/qms/dynamo", dynamoroutes);
 
 //Mount routes
-app.use("/api/v1/comp/static", routes);
+app.use("/api/v1/qms/static", routes);
 
 app.use(errorHandler);
 
@@ -83,9 +83,9 @@ const PORT = process.env.PORT || 9000;
 //listen to portnpm
 app.listen(PORT, () => {
     console.log(
-        `COMP API: Running in ${process.env.NODE_ENV} mode and listening on port http://:${PORT}`
+        `QMS API: Running in ${process.env.NODE_ENV} mode and listening on port http://:${PORT}`
     );
-    logger.debug(`COMP API: Running in ${process.env.NODE_ENV} mode and listening on port http://:${PORT}`);
+    logger.debug(`QMS API: Running in ${process.env.NODE_ENV} mode and listening on port http://:${PORT}`);
 });
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {

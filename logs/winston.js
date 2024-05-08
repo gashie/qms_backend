@@ -4,7 +4,7 @@ const { combine, label, json,errors } = format;
 require("winston-daily-rotate-file");
 
 //Label
-const CATEGORY = "comp-main-logs";
+const CATEGORY = "qms-main-logs";
 
 //DailyRotateFile func()
 const fileRotateTransport = new transports.DailyRotateFile({
@@ -35,7 +35,7 @@ const morganMiddleware = morgan(
         // Configure Morgan to use collabo logger with the http severity
         write: (message) => {
           const data = JSON.parse(message);
-          logger.http(`incoming-fleet-api-request`, data);
+          logger.http(`incoming-qms-api-request`, data);
         },
       },
     }
