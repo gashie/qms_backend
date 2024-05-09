@@ -7,6 +7,7 @@ const { VerifyUser, Logout } = require("../controllers/account/auth");
 const { protect } = require("../middleware/auth");
 const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/company/manage");
 const { CreateSystemUser } = require("../controllers/account/signup");
+const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
 
 
 //routes
@@ -35,6 +36,11 @@ router.route("/system/update_company").post(UpdateCompany);
 
 //setup default user
 router.route("/system/create_systemuser").post(CreateSystemUser);
+
+// branch management
+router.route("/system/create_branch").post(SetupBranch);
+router.route("/system/view_branch").post(ViewBranch);
+router.route("/system/update_branch").post(UpdateBranch);
 
 
 
