@@ -5,6 +5,7 @@ const router = express.Router();
 const { CreateSystemRole, ViewSystemRole, UpdateSystemRole, CreateSystemPermission, ViewSystemPermission, UpdateSystemPermission, CreateRolePermission, ViewRolePermission, CreateSystemRoute } = require("../controllers/system/user_management");
 const { VerifyUser, Logout } = require("../controllers/account/auth");
 const { protect } = require("../middleware/auth");
+const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/company/manage");
 
 
 //routes
@@ -24,6 +25,11 @@ router.route("/system/update_permission").post(UpdateSystemPermission);
 router.route("/system/create_role_permission").post(CreateRolePermission);
 router.route("/system/view_role_permission").post(ViewRolePermission);
 router.route("/system/create_routes").post(CreateSystemRoute);
+
+//setup company
+router.route("/system/create_company").post(SetupCompany);
+router.route("/system/view_company").post(ViewCompany);
+router.route("/system/update_company").post(UpdateCompany);
 
 
 
