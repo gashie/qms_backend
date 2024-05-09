@@ -6,6 +6,7 @@ const { CreateSystemRole, ViewSystemRole, UpdateSystemRole, CreateSystemPermissi
 const { VerifyUser, Logout } = require("../controllers/account/auth");
 const { protect } = require("../middleware/auth");
 const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/company/manage");
+const { CreateSystemUser } = require("../controllers/account/signup");
 
 
 //routes
@@ -30,6 +31,10 @@ router.route("/system/create_routes").post(CreateSystemRoute);
 router.route("/system/create_company").post(SetupCompany);
 router.route("/system/view_company").post(ViewCompany);
 router.route("/system/update_company").post(UpdateCompany);
+
+
+//setup default user
+router.route("/system/create_systemuser").post(CreateSystemUser);
 
 
 
