@@ -37,6 +37,24 @@ exports.ViewServices = asynHandler(async (req, res, next) => {
     sendResponse(res, 1, 200, "Record Found", results.rows)
 })
 
+exports.SearchServices = asynHandler(async (req, res, next) => {
+    let { branch_id,service_id } = req.body
+    const tableName = 'application_config_templates';
+    const columnsToSelect = []; // Use string values for column names
+    const ServiceConditions = [
+        { column: 'parent_service_id', operator: '=', value: parent_service_id },
+    ];
+    const BranchConditions = [
+        { column: 'branch_id', operator: '=', value: branch_id },
+    ];
+    let results = await GlobalModel.Finder(tableName, columnsToSelect, branch_id ? BranchConditions :ServiceConditions)
+    if (results.rows.length == 0) {
+        return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
+    }
+
+    sendResponse(res, 1, 200, "Record Found", results.rows[0])
+})
+
 exports.UpdateService = asynHandler(async (req, res, next) => {
     let payload = req.body;
     payload.updated_at = systemDate
