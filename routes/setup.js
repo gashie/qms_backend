@@ -9,6 +9,7 @@ const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/com
 const { CreateSystemUser } = require("../controllers/account/signup");
 const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
 const { SetupCounter, ViewCounters, UpdateCounter } = require("../controllers/counter/manage");
+const { SetupService, ViewServices, UpdateService } = require("../controllers/services/manage");
 
 
 //routes
@@ -49,9 +50,9 @@ router.route("/system/view_counter").post(ViewCounters);
 router.route("/system/update_counter").post(UpdateCounter);
 
 // service management
-router.route("/system/create_service").post(SetupCounter);
-router.route("/system/view_service").post(ViewCounters);
-router.route("/system/update_service").post(UpdateCounter);
+router.route("/system/create_service").post(SetupService);
+router.route("/system/view_service").post(ViewServices);
+router.route("/system/update_service").post(UpdateService);
 
 
 
