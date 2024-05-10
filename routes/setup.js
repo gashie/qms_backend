@@ -10,6 +10,7 @@ const { CreateSystemUser } = require("../controllers/account/signup");
 const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
 const { SetupCounter, ViewCounters, UpdateCounter } = require("../controllers/counter/manage");
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
+const { CreateServiceFields } = require("../controllers/services/manage_servicefields");
 
 
 //routes
@@ -55,7 +56,8 @@ router.route("/system/view_service").post(ViewServices);
 router.route("/system/update_service").post(UpdateService);
 router.route("/system/service_search").post(SearchServices);
 
-
+// service fields
+router.route("/system/create_servicefields").post(CreateServiceFields);
 
 //user login auth
 router.route("/auth").post(protect, VerifyUser);
