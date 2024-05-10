@@ -60,8 +60,8 @@ shopdb.Finder = (tableName, columnsToSelect, conditions) => {
         const values = [];
 
         conditions.forEach((conditionObj, index) => {
-            if (conditionObj.operator === 'IS NOT NULL') {
-                conditionClauses.push(`"${conditionObj.column}" IS NOT NULL`);
+            if (conditionObj.value === null) {
+                conditionClauses.push(`"${conditionObj.column}" IS NULL`);
             } else if (conditionObj.isDateColumn) {
                 conditionClauses.push(`"${conditionObj.column}" >= $${index + 1}`);
                 values.push(conditionObj.value);
@@ -77,9 +77,6 @@ shopdb.Finder = (tableName, columnsToSelect, conditions) => {
 
         const sql = `SELECT ${selectClause} FROM "${tableName}" ${whereClause}`;
 
-
-
-
         pool.query(sql, values, (err, results) => {
             if (err) {
                 logger.error(err);
@@ -90,6 +87,13 @@ shopdb.Finder = (tableName, columnsToSelect, conditions) => {
         });
     });
 };
+
+
+
+
+
+
+
 shopdb.Create = (payload, table, returnfield) => {
     let columns = Object.keys(payload)
     let params = Object.values(payload)
