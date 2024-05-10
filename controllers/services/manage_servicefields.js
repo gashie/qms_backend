@@ -37,20 +37,14 @@ exports.CreateServiceFields = asynHandler(async (req, res, next) => {
 
 
 
-exports.SearchServices = asynHandler(async (req, res, next) => {
-    let { branch_id, service_id } = req.body
-    const tableName = 'service';
+exports.SearchServicesFields = asynHandler(async (req, res, next) => {
+    let { service_id } = req.body
+    const tableName = 'form_fields';
     const columnsToSelect = []; // Use string values for column names
     const ServiceConditions = [
-        { column: 'parent_service_id', operator: '=', value: service_id },
+        { column: 'service_id', operator: '=', value: service_id },
     ];
-    const BranchConditions = [
-        { column: 'branch_id', operator: '=', value: branch_id },
-        { column: 'parent_service_id', operator: 'IS', value: null },
-
-
-    ];
-    let results = await GlobalModel.Finder(tableName, columnsToSelect, branch_id ? BranchConditions : ServiceConditions)
+    let results = await GlobalModel.Finder(tableName, columnsToSelect, ServiceConditions)
     if (results.rows.length == 0) {
         return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
     }
@@ -62,7 +56,7 @@ exports.UpdateServiceFields = asynHandler(async (req, res, next) => {
     let payload = req.body;
     payload.updated_at = systemDate
 
-    const runupdate = await GlobalModel.Update(payload, 'service', 'service_id', payload.service_id)
+    const runupdate = await GlobalModel.Update(payload, 'form_fields', 'field_id', payload.field_id)
     if (runupdate.rowCount == 1) {
         return sendResponse(res, 1, 200, "Record Updated", runupdate.rows[0])
 
