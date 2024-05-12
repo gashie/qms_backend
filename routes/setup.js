@@ -12,7 +12,7 @@ const { SetupCounter, ViewCounters, UpdateCounter } = require("../controllers/co
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
 const { CreateServiceFields, SearchServicesFields, UpdateServiceFields } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
-const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate } = require("../controllers/devices/dispenser");
+const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate, SetupTemplateExchangeRate, ViewTemplateExchangeRate, UpdateTemplateExchangeRate } = require("../controllers/devices/dispenser");
 
 
 //routes
@@ -76,6 +76,9 @@ router.route("/system/update_dispenser_template").post(UpdateDispenserTemplate);
 router.route("/system/assign_to_template").post(AssignTemplateToDispenser);
 router.route("/system/view_assigned_template").post(ViewAssignedTemplate);
 router.route("/system/update_assigned_template").post(UpdateAssignedTemplate);
+router.route("/system/create_templaterate").post(SetupTemplateExchangeRate);
+router.route("/system/view__templaterate").post(ViewTemplateExchangeRate);
+router.route("/system/update__templaterate").post(UpdateTemplateExchangeRate);
 
 //user login auth
 router.route("/auth").post(protect, VerifyUser);

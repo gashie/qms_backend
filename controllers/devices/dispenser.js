@@ -209,7 +209,7 @@ exports.SetupTemplateExchangeRate = asynHandler(async (req, res, next) => {
  */
 
     let payload = req.body;
-    let results = await GlobalModel.Create(payload, 'display_device_templates', '');
+    let results = await GlobalModel.Create(payload, 'fx_rates', '');
     if (results.rowCount == 1) {
         return sendResponse(res, 1, 200, "Record saved", [])
     } else {
