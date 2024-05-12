@@ -18,11 +18,11 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(fileupload({
-    limits: {
-        fileSize: 10000000 //1mb
-    },
-    abortOnLimit: true,
-    responseOnLimit: 'File size limit has been reached'
+    // limits: {
+    //     fileSize: 10000000 //1mb
+    // },
+    // abortOnLimit: true,
+    // responseOnLimit: 'File size limit has been reached'
 }));
 
 //Set Security Headers
