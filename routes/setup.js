@@ -13,6 +13,7 @@ const { SetupService, ViewServices, UpdateService, SearchServices } = require(".
 const { CreateServiceFields, SearchServicesFields, UpdateServiceFields } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
 const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate, SetupTemplateExchangeRate, ViewTemplateExchangeRate, UpdateTemplateExchangeRate } = require("../controllers/devices/dispenser");
+const { OpenDisplayView } = require("../controllers/devices/view");
 
 
 //routes
@@ -79,6 +80,9 @@ router.route("/system/update_assigned_template").post(UpdateAssignedTemplate);
 router.route("/system/create_templaterate").post(SetupTemplateExchangeRate);
 router.route("/system/view__templaterate").post(ViewTemplateExchangeRate);
 router.route("/system/update__templaterate").post(UpdateTemplateExchangeRate);
+
+//open display view
+router.route("/system/open_displayview").post(OpenDisplayView);
 
 //user login auth
 router.route("/auth").post(protect, VerifyUser);
