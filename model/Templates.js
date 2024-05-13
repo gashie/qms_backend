@@ -30,9 +30,6 @@ shopdb.ShowDeviceTemplates = () => {
     });
 };
 shopdb.ShowMyDeviceTemplates = (ip_address) => {
-    console.log('====================================');
-    console.log(ip_address);
-    console.log('====================================');
     return new Promise((resolve, reject) => {
         pool.query(`
         SELECT d.device_id, d.device_name,

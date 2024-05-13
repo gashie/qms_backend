@@ -10,10 +10,11 @@ const { CreateSystemUser } = require("../controllers/account/signup");
 const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
 const { SetupCounter, ViewCounters, UpdateCounter } = require("../controllers/counter/manage");
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
-const { CreateServiceFields, SearchServicesFields, UpdateServiceFields } = require("../controllers/services/manage_servicefields");
+const { AssignServiceToForm, SearchServicesFields, UpdateServiceFields, ViewServiceForms } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
 const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate, SetupTemplateExchangeRate, ViewTemplateExchangeRate, UpdateTemplateExchangeRate } = require("../controllers/devices/dispenser");
 const { OpenDisplayView } = require("../controllers/devices/view");
+const { SetupForm, ViewForms, UpdateForm, SetupFormFields, SearchFormFields, UpdateFormFields } = require("../controllers/form/manage");
 
 
 //routes
@@ -59,10 +60,21 @@ router.route("/system/view_service").post(ViewServices);
 router.route("/system/update_service").post(UpdateService);
 router.route("/system/service_search").post(SearchServices);
 
+
+// form management
+router.route("/system/create_form").post(SetupForm);
+router.route("/system/view_forms").post(ViewForms);
+router.route("/system/update_form").post(UpdateForm);
+router.route("/system/add_form_fields").post(SetupFormFields);
+router.route("/system/search_formfields").post(SearchFormFields);
+router.route("/system/update_form_fields").post(UpdateFormFields);
+
+
 // service fields
-router.route("/system/create_servicefields").post(CreateServiceFields);
-router.route("/system/search_servicefields").post(SearchServicesFields);
-router.route("/system/update_servicefield").post(UpdateServiceFields);
+router.route("/system/assign_service_to_form").post(AssignServiceToForm);
+router.route("/system/view_service_form").post(ViewServiceForms);
+router.route("/system/search_service_form").post(SearchServicesFields);
+router.route("/system/update_service_form").post(UpdateServiceFields);
 
 
 // manage devices

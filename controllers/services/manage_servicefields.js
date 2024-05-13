@@ -1,54 +1,58 @@
 const asynHandler = require("../../middleware/async");
 const { sendResponse, CatchHistory } = require("../../helper/utilfunc");
 const GlobalModel = require("../../model/Global");
+const { FindServiceForm, ListServiceForms } = require("../../model/Forms");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
-exports.CreateServiceFields = asynHandler(async (req, res, next) => {
-    let items = req.body.form_fields;
-    let { service_id } = req.body
-    let itemCount = items.length;
+exports.AssignServiceToForm = asynHandler(async (req, res, next) => {
+    // let {service_id,form_id} = req.body
     /**
- * Create new role.
- * @param {string} name - Name or title of the .
- * @param {string} description - Description: for risk management.
- * @returns {Object} - Object containing role details.
+ * Link service to  form.
+ * @param {string} form_id - Name or title of the form.
  */
 
-    let isDone = false
-    for (const item of items) {
-        item.service_id = service_id
+    let payload = req.body;
+    let results = await GlobalModel.Create(payload, 'service_form_mapping', '');
+    if (results.rowCount == 1) {
+        return sendResponse(res, 1, 200, "Record saved", [])
+    } else {
+        return sendResponse(res, 0, 200, "Sorry, error saving record: contact administrator", [])
 
-        console.log(item);
-        await GlobalModel.Create(item, 'form_fields', '');
-        if (!--itemCount) {
-            isDone = true;
-            console.log(" => This is the last iteration...");
-
-        } else {
-            console.log(" => Still saving data...");
-
-        }
-    }
-    if (isDone) {
-        return sendResponse(res, 1, 200, `${items.length} new fields added to service with id ${service_id}`, { service_id, items })
     }
 
 })
 
 
 
+
 exports.SearchServicesFields = asynHandler(async (req, res, next) => {
     let { service_id } = req.body
+
+
+
+    let findform = await FindServiceForm(service_id);
+    if (findform.rows.length == 0) {
+        return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
+    }
+ 
     const tableName = 'form_fields';
     const columnsToSelect = []; // Use string values for column names
     const ServiceConditions = [
-        { column: 'service_id', operator: '=', value: service_id },
+        { column: 'form_id', operator: '=', value: findform.rows[0].form_id },
     ];
     let results = await GlobalModel.Finder(tableName, columnsToSelect, ServiceConditions)
+    
+
+    sendResponse(res, 1, 200, "Record Found", {form:findform.rows[0],form_fields:results.rows})
+})
+
+exports.ViewServiceForms = asynHandler(async (req, res, next) => {
+    // let userData = req.user;
+
+    let results = await ListServiceForms();
     if (results.rows.length == 0) {
         return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
     }
-
     sendResponse(res, 1, 200, "Record Found", results.rows)
 })
 
@@ -56,7 +60,7 @@ exports.UpdateServiceFields = asynHandler(async (req, res, next) => {
     let payload = req.body;
     payload.updated_at = systemDate
 
-    const runupdate = await GlobalModel.Update(payload, 'form_fields', 'field_id', payload.field_id)
+    const runupdate = await GlobalModel.Update(payload, 'service_form_mapping', 'mapping_id', payload.mapping_id)
     if (runupdate.rowCount == 1) {
         return sendResponse(res, 1, 200, "Record Updated", runupdate.rows[0])
 
