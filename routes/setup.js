@@ -82,7 +82,7 @@ router.route("/system/view__templaterate").post(ViewTemplateExchangeRate);
 router.route("/system/update__templaterate").post(UpdateTemplateExchangeRate);
 
 //open display view
-router.route("/system/open_displayview").post(OpenDisplayView);
+router.route("/system/open_displayview").post(protect,OpenDisplayView);
 
 //user login auth
 router.route("/auth").post(protect, VerifyUser);

@@ -29,7 +29,10 @@ shopdb.ShowDeviceTemplates = () => {
         });
     });
 };
-shopdb.ShowMyDeviceTemplates = (device_id) => {
+shopdb.ShowMyDeviceTemplates = (ip_address) => {
+    console.log('====================================');
+    console.log(ip_address);
+    console.log('====================================');
     return new Promise((resolve, reject) => {
         pool.query(`
         SELECT d.device_id, d.device_name,
@@ -42,9 +45,9 @@ shopdb.ShowMyDeviceTemplates = (device_id) => {
         FROM public.devices d
         JOIN public.display_device_templates dt ON d.device_id = dt.device_id
         JOIN public.dispenser_templates t ON dt.template_id = t.template_id
-        WHERE d.device_id = $1
+        WHERE d.ip_address = $1
     
-        `, [device_id], (err, results) => {
+        `, [ip_address], (err, results) => {
             if (err) {
                 logger.error(err);
                 return reject(err);

@@ -4,78 +4,56 @@ const { DetectDevice, DetectIp, MainDec } = require("../helper/devicefuncs")
 
 const asynHandler = require("../middleware/async");
 const { sendResponse, CatchHistory } = require("../helper/utilfunc");
-const { verifyPermission } = require("../model/Account");
+const { autoGenerateCookie } = require("../helper/auto");
 
 dotenv.config({ path: "./config/config.env" });
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 exports.protect = asynHandler(async (req, res, next) => {
 
     // let device = await DetectDevice(req.headers['user-agent'], req)
-    let userIp = DetectIp(req)
-    let token;
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith("Bearer")
-    ) {
-        token = req.headers.authorization.split(" ")[1];
-    } else if (req?.cookies?.cid) {
-        token = req?.cookies?.cid;
-    }
-    //make sure token exists
-    if (!token) {
-        console.log('no token');
-        CatchHistory({ api_response: `User login failed: no token present`, function_name: 'protect-middleware', date_started: systemDate, sql_action: "", event: "Middleware to protect routes", actor: '' }, req)
-        return sendResponse(res, 0, 401, 'Sorry Login not successful')
-    }
 
     try {
-        //Verify token
+        let userIp = DetectIp(req);
+        let token;
+    
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+            token = req.headers.authorization.split(" ")[1];
+        } else if (req?.cookies?.did) {
+            token = req?.cookies?.did;
+        }
+    
+        //make sure token exists
+        if (!token) {
+            console.log('no token, Generate new');
+            try {
+                return await autoGenerateCookie(req, res,next,userIp); // Call autoGenerateCookie function
+                // return next();
+            } catch (error) {
+                console.error('Error generating cookie:', error);
+                return sendResponse(res, 0, 500, 'Internal Server Error');
+            }
+        }
+    
+        // Verify token
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        let tokenInfo = decoded.EncUserInfo
-        let decryptToken = MainDec(tokenInfo)
-
-        let checkIp = decryptToken?.devirb
-        // let checkDevice = decryptToken?.devcrb
+        let tokenInfo = decoded.EncUserInfo;
+        let decryptToken = MainDec(tokenInfo);
+        let checkIp = decryptToken?.devirb;
+    
         if (checkIp === userIp) {
-
-            // if (checkIp === userIp && checkDevice === device) {
-            req.user = decryptToken;
-            return next()
+            req.device_template = decryptToken;
+            return next();
         } else {
-            // console.log('DeviceCheck =', checkDevice === device);
             console.log('IPCheck =', checkIp === userIp);
             console.log('User want to bypass, but access denied');
             CatchHistory({ api_response: `User login failed: device or ip mismatch`, function_name: 'protect-middleware', date_started: systemDate, sql_action: "", event: "Middleware to protect routes", actor: '' }, req)
-            return sendResponse(res, 0, 401, 'Sorry Login not successful')
-
-
+            return sendResponse(res, 0, 401, 'Sorry Login not successful');
         }
-
     } catch (error) {
+        console.log(error);
         CatchHistory({ api_response: `User login failed: invalid token or token has expired`, function_name: 'protect-middleware', date_started: systemDate, sql_action: "", event: "Middleware to protect routes", actor: '' }, req)
-        return sendResponse(res, 0, 401, 'Sorry Login not successful')
+        return sendResponse(res, 0, 401, 'Sorry Login not successful');
     }
+    
 });
 
-exports.checkPermMiddleware = asynHandler(async (req, res, next) => {
-    let userData = req.user;
-    let user_id = userData?.user_id
-    const path = req.path;
-    const method = req.method.toUpperCase();
-
-    console.log('====================================');
-    console.log(user_id,path,method);
-    console.log('====================================');
-
-    const checkAllowed = await verifyPermission(user_id, path, method)
-    let isAllowed = checkAllowed.rows[0]
-    console.log('====================================');
-    console.log(isAllowed);
-    console.log('====================================');
-
-    if (!isAllowed) {
-        CatchHistory({ payload: JSON.stringify(req.body), api_response: `Sorry, Access denied: You do not have permission to access this route`, function_name: 'checkPermMiddleware', date_started: systemDate, sql_action: "SELECT", event: "VERIFY PERMISSION", actor: userData.user_id }, req)
-        return sendResponse(res, 0, 200, `Access denied: You do not have permission to access this route`)
-    }
-    return next()
-});
