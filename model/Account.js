@@ -52,6 +52,7 @@ compdb.viewMyCounter = (user_id,branch_id) => {
 
             `
             SELECT
+            c.counter_id,
             c.name
         FROM
             counter c
