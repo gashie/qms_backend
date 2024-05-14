@@ -3,18 +3,20 @@ const router = express.Router();
 // const { userLogin } = require('../middleware/validator')
 // const { protect } = require('../middleware/auth')
 const { CreateSystemRole, ViewSystemRole, UpdateSystemRole, CreateSystemPermission, ViewSystemPermission, UpdateSystemPermission, CreateRolePermission, ViewRolePermission, CreateSystemRoute } = require("../controllers/system/user_management");
-const { VerifyUser, Logout } = require("../controllers/account/auth");
+const { VerifyUser, Logout, UserAuth } = require("../controllers/account/auth");
 const { protect } = require("../middleware/auth");
 const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/company/manage");
-const { CreateSystemUser } = require("../controllers/account/signup");
+const { CreateSystemUser, CreateTellers } = require("../controllers/account/signup");
 const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
-const { SetupCounter, ViewCounters, UpdateCounter } = require("../controllers/counter/manage");
+const { SetupCounter, ViewCounters, UpdateCounter, AssignUserToCounter } = require("../controllers/counter/manage");
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
 const { AssignServiceToForm, SearchServicesFields, UpdateServiceFields, ViewServiceForms } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
 const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate, SetupTemplateExchangeRate, ViewTemplateExchangeRate, UpdateTemplateExchangeRate } = require("../controllers/devices/dispenser");
 const { OpenDisplayView } = require("../controllers/devices/view");
 const { SetupForm, ViewForms, UpdateForm, SetupFormFields, SearchFormFields, UpdateFormFields } = require("../controllers/form/manage");
+const { GenerateNewTicket } = require("../controllers/ticket/manage");
+const { protectUser } = require("../middleware/userauth");
 
 
 //routes
@@ -43,6 +45,7 @@ router.route("/system/update_company").post(UpdateCompany);
 
 //setup default user
 router.route("/system/create_systemuser").post(CreateSystemUser);
+router.route("/system/add_teller").post(CreateTellers);
 
 // branch management
 router.route("/system/create_branch").post(SetupBranch);
@@ -53,6 +56,9 @@ router.route("/system/update_branch").post(UpdateBranch);
 router.route("/system/create_counter").post(SetupCounter);
 router.route("/system/view_counter").post(ViewCounters);
 router.route("/system/update_counter").post(UpdateCounter);
+
+router.route("/system/assign_to_counter").post(AssignUserToCounter);
+
 
 // service management
 router.route("/system/create_service").post(SetupService);
@@ -96,7 +102,11 @@ router.route("/system/update__templaterate").post(UpdateTemplateExchangeRate);
 //open display view
 router.route("/system/open_displayview").post(protect,OpenDisplayView);
 
+//tickets
+router.route("/system/generate_ticket").post(GenerateNewTicket);
+
 //user login auth
-router.route("/auth").post(protect, VerifyUser);
+router.route("/auth").post(protectUser, VerifyUser);
+router.route("/user_login").post(UserAuth);
 router.route("/logout").post(protect, Logout);
 module.exports = router;

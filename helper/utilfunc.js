@@ -57,33 +57,29 @@ module.exports = {
         .cookie("did", accessToken, options);
         
     },
-    // sendCookie: async (UserInfo, status, code, res, req) => {
-    //     // let device = await DetectDevice(req.headers['user-agent'], req)
-    //     let userIp = DetectIp(req)
-    //     // UserInfo.devcrb = device
-    //     UserInfo.devirb = userIp
-    //     let EncUserInfo = MainEnc(UserInfo)  //encrypt entire user information
-    //     const accessToken = jwt.sign({ EncUserInfo }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '72hrs' })
+    sendUserCookie: async (UserInfo, status, code, res, req) => {
+        // let device = await DetectDevice(req.headers['user-agent'], req)
+        let userIp = DetectIp(req)
+        // UserInfo.devcrb = device
+        UserInfo.devirb = userIp
+        let EncUserInfo = MainEnc(UserInfo)  //encrypt entire user information
+        const accessToken = jwt.sign({ EncUserInfo }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24hrs' })
 
-    //     // // Create secure cookie with refresh token 
-    //     const options =  {
-    //         httpOnly: true, //accessible only by web server 
-    //         secure: false, //https
-    //         // sameSite: 'None', //cross-site cookie 
-    //         maxAge: 1 * 72 * 60 * 60 * 1000 //cookie expiry: set to match rT
-    //     }
-    //     logger.info('Logged in successfully')
-    //     // res.status(code).json({
-    //     //     status: status,
-    //     //     message: 'Logged in successfully',
-    //     //     data: accessToken,
+        // // Create secure cookie with refresh token 
+        const options =  {
+            httpOnly: true, //accessible only by web server 
+            secure: false, //https
+            // sameSite: 'None', //cross-site cookie 
+            maxAge: 1 * 24 * 60 * 60 * 1000 //cookie expiry: set to match rT
+        }
+        logger.info('Logged in successfully')
 
-    //     // })
-    //    return res
-    //     .status(code)
-    //     .cookie("cid", accessToken, options)
-    //     .json({ status: 1, message: "Logged in" });
-    // },
+        // })
+       return res
+        .status(code)
+        .cookie("tid", accessToken, options)
+        .json({ status: 1, message: "Logged in" });
+    },
     clearResponse: (req, res) => {
         const cookies = req.cookies
         if (!cookies?.cid) return res.sendStatus(204) //No content

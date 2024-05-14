@@ -4,19 +4,12 @@ const { logger } = require("../logs/winston");
 let compdb = {};
 
 
-compdb.dealerAuthModel = (username) => {
+compdb.tellerAuthModel = (username) => {
     return new Promise((resolve, reject) => {
         pool.query(
 
             `
-            SELECT DISTINCT
-			userinfo.user_id,
-            userinfo.*,
-			tenant.*
-    FROM
-                  users userinfo
-                  INNER JOIN tenants tenant ON userinfo.tenant_id  = tenant.tenant_id
-                  WHERE userinfo.username = $1
+            SELECT * FROM users  WHERE username = $1
             `
 
             , [username], (err, results) => {
@@ -44,6 +37,29 @@ compdb.findUserRoleModel = (username) => {
             `
 
             , [username], (err, results) => {
+                if (err) {
+                    logger.error(err);
+                    return reject(err);
+                }
+
+                return resolve(results);
+            });
+    });
+};
+compdb.viewMyCounter = (user_id,branch_id) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+
+            `
+            SELECT
+            c.name
+        FROM
+            counter c
+            INNER JOIN user_counter uc ON c.counter_id = uc.counter_id
+                  WHERE uc.user_id = $1 AND c.branch_id  = $2
+            `
+
+            , [user_id,branch_id], (err, results) => {
                 if (err) {
                     logger.error(err);
                     return reject(err);

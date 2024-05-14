@@ -92,7 +92,35 @@ exports.ViewAllUsers = asynHandler(async (req, res, next) => {
 
 
 })
+exports.CreateTellers = asynHandler(async (req, res, next) => {
 
+    let { account, role_id } = req.body
+
+
+
+    //generate hashed password
+    const salt = await bcyrpt.genSalt(10);
+    account.password = await bcyrpt.hash(account.password, salt);
+    account.is_system_admin = false
+
+    //save user details to db
+    let user_account = await GlobalModel.Create(account, 'users', '');
+    let userSavedData = user_account.rows[0]
+
+    let userRolePayload = {
+        role_id,
+        user_id: userSavedData.user_id,
+    }
+    let create_user_role = await GlobalModel.Create(userRolePayload, 'user_roles', '');
+
+    if (user_account.rowCount == 1 && create_user_role.rowCount == 1) {
+        return sendResponse(res, 1, 200, "Account created successfully", [])
+    } else {
+        return sendResponse(res, 0, 200, "Sorry, error saving record: contact administrator", [])
+    }
+
+
+})
 exports.PasswordReset = asynHandler(async (req, res, next) => {
     let userData = req.user;
     let username = req.body.username

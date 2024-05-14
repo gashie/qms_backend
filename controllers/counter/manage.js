@@ -51,3 +51,18 @@ exports.UpdateCounter = asynHandler(async (req, res, next) => {
     }
 })
 
+exports.AssignUserToCounter = asynHandler(async (req, res, next) => {
+    /**
+
+ */
+
+    let payload = req.body;
+    let results = await GlobalModel.Create(payload, 'user_counter', '');
+    if (results.rowCount == 1) {
+        return sendResponse(res, 1, 200, "Record saved", [])
+    } else {
+        return sendResponse(res, 0, 200, "Sorry, error saving record: contact administrator", [])
+
+    }
+
+})
