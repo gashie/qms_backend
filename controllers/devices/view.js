@@ -5,6 +5,7 @@ const path = require("path");
 const { sendResponse, CatchHistory } = require("../../helper/utilfunc");
 const GlobalModel = require("../../model/Global");
 const { ShowMyDeviceTemplates } = require("../../model/Templates");
+const { showBranchCounterTicket } = require("../../model/Counter");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
 exports.OpenDisplayView = asynHandler(async (req, res, next) => {
@@ -12,7 +13,7 @@ exports.OpenDisplayView = asynHandler(async (req, res, next) => {
 
     let template = req.device_template
     if (template && template?.device_type === 'display') {
-
+        
         // Find template carousel
         const tableName = 'fx_rates';
         const columnsToSelect = []; // Use string values for column names
@@ -29,8 +30,9 @@ exports.OpenDisplayView = asynHandler(async (req, res, next) => {
                 { column: 'dispenser_template_id', operator: '=', value: template.template_id },
             ];
             let carousel = await GlobalModel.Finder(tableName, columnsToSelect, conditions)
+            let counter = await showBranchCounterTicket(template.branch_id);
 
-            sendResponse(res, 1, 200, "Record Found", { template, carousel: carousel.rows, rate: rate.rows })
+            sendResponse(res, 1, 200, "Record Found", { template, carousel: carousel.rows, rate: rate.rows,counter:counter.rows })
         } else {
             sendResponse(res, 1, 200, "Record Found", { template, rate: rate.rows })
         }
