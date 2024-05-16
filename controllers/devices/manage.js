@@ -4,6 +4,7 @@ const customId = require("custom-id");
 const path = require("path");
 const { sendResponse, CatchHistory } = require("../../helper/utilfunc");
 const GlobalModel = require("../../model/Global");
+const { SimpleEncrypt } = require("../../helper/devicefuncs");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
 exports.RegisterDevice = asynHandler(async (req, res, next) => {
@@ -52,11 +53,11 @@ exports.ActivateDevice = asynHandler(async (req, res, next) => {
     if (results.rows.length == 0) {
         return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
     }
-    device_info.authentication_code = authentication_code
+    // device_info.authentication_code = authentication_code
     var licenseData = { info: device_info, prodCode: "LEN100120", appVersion: "1.5", osType: 'IOS8' }
-
     var license_key = licenseKey.createLicense(licenseData)
-    payload.license_key = license_key.license
+    let token = SimpleEncrypt(license_key.license, device_info.mac)
+    payload.license_key = token
     payload.is_activated = true
     payload.activation_status = 'activated'
     payload.updated_at = systemDate
@@ -64,7 +65,7 @@ exports.ActivateDevice = asynHandler(async (req, res, next) => {
 
     const runupdate = await GlobalModel.Update(payload, 'devices', 'device_id', results.rows[0].device_id)
     if (runupdate.rowCount == 1) {
-        return sendResponse(res, 1, 200, "Record Updated", {license:payload.license_key,status:payload.activation_status,activated_at:payload.activated_at,authentication_code})
+        return sendResponse(res, 1, 200, "Record Updated", { license: license_key.license, status: payload.activation_status, activated_at: payload.activated_at, authentication_code })
 
 
     } else {
