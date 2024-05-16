@@ -12,7 +12,7 @@ const { SetupCounter, ViewCounters, UpdateCounter, AssignUserToCounter } = requi
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
 const { AssignServiceToForm, SearchServicesFields, UpdateServiceFields, ViewServiceForms } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
-const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate, SetupTemplateExchangeRate, ViewTemplateExchangeRate, UpdateTemplateExchangeRate } = require("../controllers/devices/dispenser");
+const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate, SetupTemplateExchangeRate, ViewTemplateExchangeRate, UpdateTemplateExchangeRate, UpdateDispenserCarouselTemplate } = require("../controllers/devices/dispenser");
 const { OpenDisplayView } = require("../controllers/devices/view");
 const { SetupForm, ViewForms, UpdateForm, SetupFormFields, SearchFormFields, UpdateFormFields } = require("../controllers/form/manage");
 const { GenerateNewTicket } = require("../controllers/ticket/manage");
@@ -93,6 +93,7 @@ router.route("/system/activate_device").post(ActivateDevice);
 router.route("/system/create_dispenser_template").post(CreateDispenserTemplate);
 router.route("/system/view_dispenser_template").post(ViewDispenserTemplate);
 router.route("/system/update_dispenser_template").post(UpdateDispenserTemplate);
+router.route("/system/update_dispenser_carousel_template").post(UpdateDispenserCarouselTemplate);
 router.route("/system/assign_to_template").post(AssignTemplateToDispenser);
 router.route("/system/view_assigned_template").post(ViewAssignedTemplate);
 router.route("/system/update_assigned_template").post(UpdateAssignedTemplate);

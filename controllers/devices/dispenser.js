@@ -78,6 +78,7 @@ exports.CreateDispenserTemplate = asynHandler(async (req, res, next) => {
             }
         } else {
             // Handle case where background_image is not provided but required
+            return sendResponse(res, 0, 200, "Sorry,kindly provide image file", [])
         }
     } else {
         // Handle case where template_type is neither "video" nor "image"
@@ -175,6 +176,7 @@ exports.ViewAssignedTemplate = asynHandler(async (req, res, next) => {
 exports.UpdateDispenserTemplate = asynHandler(async (req, res, next) => {
     let payload = req.body;
     payload.updated_at = systemDate
+    let template_type = payload?.template_type
 
     const tableName = 'dispenser_templates';
     const columnsToSelect = []; // Use string values for column names
@@ -185,6 +187,7 @@ exports.UpdateDispenserTemplate = asynHandler(async (req, res, next) => {
     if (results.rows.length == 0) {
         return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
     }
+
     //oldrecord
     let background_image = req.files?.background_image
     let background_video = req.files?.background_video
@@ -215,6 +218,9 @@ exports.UpdateDispenserTemplate = asynHandler(async (req, res, next) => {
     } else if (template_type === "image") {
         // Check only background_image
         if (background_image) {
+            console.log('====================================');
+            console.log(req.files);
+            console.log('====================================');
             // Define an array of allowed image mimetypes or an array of image file extensions
             const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", /* Add more if needed */];
 
@@ -226,6 +232,9 @@ exports.UpdateDispenserTemplate = asynHandler(async (req, res, next) => {
 
                 let fileData = await autoSaveFile(background_image, 'dispenser', './uploads/images/dispenser/', background_image.name, background_image.mimetype, 'dispenser_template_setup');
                 payload.background_image = fileData.file_name
+                console.log('====================================');
+                console.log(payload);
+                console.log('====================================');
                 const results = await GlobalModel.Update(payload, 'dispenser_templates', 'template_id', payload.template_id)
                 if (results.rowCount == 1) {
                     return sendResponse(res, 1, 200, "Record saved", [])
@@ -252,6 +261,8 @@ exports.UpdateDispenserTemplate = asynHandler(async (req, res, next) => {
             }
         } else {
             // Handle case where background_image is not provided but required
+            return sendResponse(res, 0, 200, "Sorry,kindly provide image file", [])
+
         }
     } else {
         // Handle case where template_type is neither "video" nor "image"
@@ -263,7 +274,8 @@ exports.UpdateDispenserTemplate = asynHandler(async (req, res, next) => {
 exports.UpdateDispenserCarouselTemplate = asynHandler(async (req, res, next) => {
     let payload = req.body;
     payload.updated_at = systemDate
-    let content_id = payload.content_id
+    let content_id = payload?.content_id
+    let template_id = payload?.template_id
 
     const tableName = 'media_content';
     const columnsToSelect = []; // Use string values for column names
@@ -281,12 +293,11 @@ exports.UpdateDispenserCarouselTemplate = asynHandler(async (req, res, next) => 
 
     //-1 save template
     let fileData = await autoSaveFile(background_image, 'dispenser', './uploads/images/dispenser/', background_image.name, background_image.mimetype, 'dispenser_template_update');
-    let media_content = {}
-    media_content.content_type = 'image'
-    media_content.assigned_to = req.body.assigned_to
-    media_content.content_url = fileData.file_name
-    media_content.dispenser_template_id = template_id
-    const results = await GlobalModel.Update(payload, 'media_content', 'contend_id', content_id)
+    payload.content_type = 'image'
+    payload.assigned_to = req.body.assigned_to
+    payload.content_url = fileData.file_name
+    payload.dispenser_template_id = template_id
+    const results = await GlobalModel.Update(payload, 'media_content', 'content_id', content_id)
     if (results.rowCount == 1) {
         return sendResponse(res, 1, 200, "Record saved", [])
     } else {
