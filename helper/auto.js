@@ -9,9 +9,6 @@ const autoGenerateCookie = async (req, res, next, userIp) => {
 
     // Function implementation
     let { device_info, license, mac } = req.headers
-    console.log('====================================');
-    console.log(mac);
-    console.log('====================================');
     if (license) {
         //decrypt license and check if it match the one in the db, if yes,
         // Search for user in db
