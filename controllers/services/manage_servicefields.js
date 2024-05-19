@@ -35,15 +35,16 @@ exports.SearchServicesFields = asynHandler(async (req, res, next) => {
         return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
     }
  
-    const tableName = 'form_fields';
-    const columnsToSelect = []; // Use string values for column names
-    const ServiceConditions = [
-        { column: 'form_id', operator: '=', value: findform.rows[0].form_id },
-    ];
-    let results = await GlobalModel.Finder(tableName, columnsToSelect, ServiceConditions)
+    // const tableName = 'form_fields';
+    // const columnsToSelect = []; // Use string values for column names
+    // const ServiceConditions = [
+    //     { column: 'form_id', operator: '=', value: findform.rows[0].form_id },
+    // ];
+    // let results = await GlobalModel.Finder(tableName, columnsToSelect, ServiceConditions)
     
 
-    sendResponse(res, 1, 200, "Record Found", {form:findform.rows[0],form_fields:results.rows})
+    // sendResponse(res, 1, 200, "Record Found", {form:findform.rows[0],form_fields:results.rows})
+    sendResponse(res, 1, 200, "Record Found", findform.rows)
 })
 
 exports.ViewServiceForms = asynHandler(async (req, res, next) => {

@@ -29,11 +29,13 @@ shopdb.showBranchCounterTicket = (branch_id) => {
     return new Promise((resolve, reject) => {
         pool.query(`
         SELECT 
+        c.name,
         ct.counter_ticket_id, 
         ct.counter_id, 
         ct.ticket_id, 
         ct.assigned_timestamp, 
         ct.served,
+        t.token_number,
         t.branch_id, 
         t.service_id, 
         t.customer_id, 
@@ -54,6 +56,34 @@ shopdb.showBranchCounterTicket = (branch_id) => {
         ct.served = $1 AND c.branch_id = $2;
     
         `, [false, branch_id], (err, results) => {
+            if (err) {
+                logger.error(err);
+                return reject(err);
+            }
+
+            return resolve(results);
+        });
+    });
+};
+shopdb.counterServices = () => {
+    return new Promise((resolve, reject) => {
+        pool.query(`
+        SELECT 
+        sca.service_counter_assignment_id,
+        s.service_id,
+        s.name AS service_name,
+        c.name AS counter_name,
+        b.name AS branch_name
+    FROM 
+        public.service_counter_assignment sca
+    JOIN 
+        public.service s ON sca.service_id = s.service_id
+    JOIN 
+        public.counter c ON sca.counter_id = c.counter_id
+    JOIN 
+        public.branch b ON c.branch_id = b.branch_id;
+    
+        `, [], (err, results) => {
             if (err) {
                 logger.error(err);
                 return reject(err);

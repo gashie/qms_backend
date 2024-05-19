@@ -39,6 +39,7 @@
     "pg": "^8.10.0",
     "pg-promise": "^11.5.4",
     "simple-encryptor": "^4.0.0",
+    "voucher-code-generator": "^1.3.0",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1",
     "xss-clean": "^0.1.4"

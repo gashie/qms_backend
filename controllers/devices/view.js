@@ -21,6 +21,7 @@ exports.OpenDisplayView = asynHandler(async (req, res, next) => {
             { column: 'template_id', operator: '=', value: template.template_id },
         ];
         let rate = await GlobalModel.Finder(tableName, columnsToSelect, conditions)
+        let counter = await showBranchCounterTicket(template.branch_id);
 
         if (template.template_type === 'carousel') {
             // Find template carousel
@@ -30,11 +31,10 @@ exports.OpenDisplayView = asynHandler(async (req, res, next) => {
                 { column: 'dispenser_template_id', operator: '=', value: template.template_id },
             ];
             let carousel = await GlobalModel.Finder(tableName, columnsToSelect, conditions)
-            let counter = await showBranchCounterTicket(template.branch_id);
 
             sendResponse(res, 1, 200, "Record Found", { template, carousel: carousel.rows, rate: rate.rows,counter:counter.rows })
         } else {
-            sendResponse(res, 1, 200, "Record Found", { template, rate: rate.rows })
+            sendResponse(res, 1, 200, "Record Found", { template, rate: rate.rows ,counter:counter.rows})
         }
     } else {
         // Find template carousel

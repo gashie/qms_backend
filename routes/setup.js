@@ -8,7 +8,7 @@ const { protect } = require("../middleware/auth");
 const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/company/manage");
 const { CreateSystemUser, CreateTellers } = require("../controllers/account/signup");
 const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
-const { SetupCounter, ViewCounters, UpdateCounter, AssignUserToCounter } = require("../controllers/counter/manage");
+const { SetupCounter, ViewCounters, UpdateCounter, AssignServiceToCounter, ViewCounterServices, UpdateCounterServices } = require("../controllers/counter/manage");
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
 const { AssignServiceToForm, SearchServicesFields, UpdateServiceFields, ViewServiceForms } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
@@ -58,7 +58,9 @@ router.route("/system/create_counter").post(SetupCounter);
 router.route("/system/view_counter").post(ViewCounters);
 router.route("/system/update_counter").post(UpdateCounter);
 
-router.route("/system/assign_to_counter").post(AssignUserToCounter);
+router.route("/system/assign_service_to_counter").post(AssignServiceToCounter);
+router.route("/system/view_counter_services").post(ViewCounterServices);
+router.route("/system/update_counter_services").post(UpdateCounterServices);
 
 
 // service management
@@ -105,7 +107,7 @@ router.route("/system/update__templaterate").post(UpdateTemplateExchangeRate);
 router.route("/system/open_displayview").post(protect,OpenDisplayView);
 
 //tickets
-router.route("/system/generate_ticket").post(GenerateNewTicket);
+router.route("/system/generate_ticket").post(protect,GenerateNewTicket);
 router.route("/system/pending_ticket").post(protectUser,ListPendingTicket);
 router.route("/system/process_ticket").post(protectUser,ProcessTicket);
 router.route("/system/show_currently_serving").post(protectUser,ShowCounterServing);

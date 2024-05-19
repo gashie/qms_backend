@@ -44,6 +44,21 @@
             "date": 1715839327823,
             "name": "logs/rotate-2024-05-16.log",
             "hash": "7280e02f046a1781ee89ca1dd7e95df277b62176acef04951371c502d710d7d1"
+        },
+        {
+            "date": 1715911116960,
+            "name": "logs/rotate-2024-05-17.log",
+            "hash": "76c1421ff9c92f1ecfa56a5bb6b9594f49a94913f76aa119ad3f3cdd15618a4d"
+        },
+        {
+            "date": 1716003819509,
+            "name": "logs/rotate-2024-05-18.log",
+            "hash": "4fe478d0f61b91e92c80b26b4d862acb9586e3f1d25c437f92212fcc76ad4c65"
+        },
+        {
+            "date": 1716120951231,
+            "name": "logs/rotate-2024-05-19.log",
+            "hash": "0e42d67f7973fd0b3f7d82845c388d56591bfed3a77665e78f2d967f7a4ebbb1"
         }
     ],
     "hashType": "sha256"

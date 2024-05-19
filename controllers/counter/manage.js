@@ -1,6 +1,7 @@
 const asynHandler = require("../../middleware/async");
 const { sendResponse, CatchHistory } = require("../../helper/utilfunc");
 const GlobalModel = require("../../model/Global");
+const { counterServices } = require("../../model/Counter");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
 exports.SetupCounter = asynHandler(async (req, res, next) => {
@@ -51,13 +52,13 @@ exports.UpdateCounter = asynHandler(async (req, res, next) => {
     }
 })
 
-exports.AssignUserToCounter = asynHandler(async (req, res, next) => {
+exports.AssignServiceToCounter = asynHandler(async (req, res, next) => {
     /**
 
  */
 
     let payload = req.body;
-    let results = await GlobalModel.Create(payload, 'user_counter', '');
+    let results = await GlobalModel.Create(payload, 'service_counter_assignment', '');
     if (results.rowCount == 1) {
         return sendResponse(res, 1, 200, "Record saved", [])
     } else {
@@ -65,4 +66,28 @@ exports.AssignUserToCounter = asynHandler(async (req, res, next) => {
 
     }
 
+})
+exports.ViewCounterServices = asynHandler(async (req, res, next) => {
+    // let userData = req.user;
+
+    let results = await counterServices();
+    if (results.rows.length == 0) {
+        return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
+    }
+    sendResponse(res, 1, 200, "Record Found", results.rows)
+})
+
+
+exports.UpdateCounterServices = asynHandler(async (req, res, next) => {
+    let payload = req.body;
+    payload.updated_at = systemDate
+
+    const runupdate = await GlobalModel.Update(payload, 'service_counter_assignment', 'service_counter_assignment_id', payload.service_counter_assignment_id)
+    if (runupdate.rowCount == 1) {
+        return sendResponse(res, 1, 200, "Record Updated", runupdate.rows[0])
+
+
+    } else {
+        return sendResponse(res, 0, 200, "Update failed, please try later", [])
+    }
 })
