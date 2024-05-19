@@ -93,4 +93,33 @@ shopdb.counterServices = () => {
         });
     });
 };
+shopdb.counterDevices = () => {
+    return new Promise((resolve, reject) => {
+        pool.query(`
+        SELECT 
+        d.device_id,
+        d.device_name,
+        d.device_type,
+        d.ip_address,
+        b.name AS branch_name,
+        c.name AS counter_name
+    FROM 
+        public.counter_assignments ca
+    JOIN 
+        public.devices d ON ca.device_id = d.device_id
+    JOIN 
+        public.branch b ON ca.branch_id = b.branch_id
+    JOIN 
+        public.counter c ON ca.counter_id = c.counter_id;
+    
+        `, [], (err, results) => {
+            if (err) {
+                logger.error(err);
+                return reject(err);
+            }
+
+            return resolve(results);
+        });
+    });
+};
 module.exports = shopdb

@@ -1,8 +1,8 @@
 const asynHandler = require("../../middleware/async");
 const voucher_codes = require('voucher-code-generator');
-const { sendResponse, CatchHistory } = require("../../helper/utilfunc");
+const { sendResponse, CatchHistory, sendCounterCookie } = require("../../helper/utilfunc");
 const GlobalModel = require("../../model/Global");
-const { counterServices } = require("../../model/Counter");
+const { counterServices, counterDevices } = require("../../model/Counter");
 const { DetectIp } = require("../../helper/devicefuncs");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
@@ -132,7 +132,7 @@ exports.RegisterCounterStation = asynHandler(async (req, res, next) => {
         count: 1,
         charset: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     });
-    // let userIp = DetectIp(req);
+    
     let devicePayload = {
         branch_id: counterInfo.branch_id,
         device_name: payload.name,
@@ -156,4 +156,50 @@ exports.RegisterCounterStation = asynHandler(async (req, res, next) => {
 
     }
 
+})
+exports.ActivateCounterStation = asynHandler(async (req, res, next) => {
+    let { authentication_code } = req.body
+    let payload = {};
+    const tableName = 'devices';
+    const columnsToSelect = []; // Use string values for column names
+    const ServiceConditions = [
+        { column: 'authentication_code', operator: '=', value: authentication_code },
+        { column: 'is_activated', operator: '=', value: false },
+        { column: 'activation_status', operator: '=', value: 'pending' },
+    ];
+    let results = await GlobalModel.Finder(tableName, columnsToSelect, ServiceConditions)
+    if (results.rows.length == 0) {
+        return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
+    }
+
+    payload.ip_address =  DetectIp(req);
+    payload.is_activated = true
+    payload.activation_status = 'activated'
+    payload.updated_at = systemDate
+    payload.activated_at = systemDate
+
+    const runupdate = await GlobalModel.Update(payload, 'devices', 'device_id', results.rows[0].device_id)
+    if (runupdate.rowCount == 1) {
+       let counter_object = {
+        authentication_code:authentication_code,
+        ip_address:payload.ip_address,
+        is_activated:payload.is_activated
+       }
+        return sendCounterCookie(counter_object, 1, 200, res, req)
+
+
+    } else {
+        return sendResponse(res, 0, 200, "Update failed, please try later", [])
+    }
+
+})
+
+exports.ViewCounterStationDevices = asynHandler(async (req, res, next) => {
+    // let userData = req.user;
+
+    let results = await counterDevices();
+    if (results.rows.length == 0) {
+        return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
+    }
+    sendResponse(res, 1, 200, "Record Found", results.rows)
 })

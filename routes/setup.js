@@ -8,7 +8,7 @@ const { protect } = require("../middleware/auth");
 const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/company/manage");
 const { CreateSystemUser, CreateTellers } = require("../controllers/account/signup");
 const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
-const { SetupCounter, ViewCounters, UpdateCounter, AssignServiceToCounter, ViewCounterServices, UpdateCounterServices, RegisterCounterStation } = require("../controllers/counter/manage");
+const { SetupCounter, ViewCounters, UpdateCounter, AssignServiceToCounter, ViewCounterServices, UpdateCounterServices, RegisterCounterStation, ActivateCounterStation, ViewCounterStationDevices } = require("../controllers/counter/manage");
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
 const { AssignServiceToForm, SearchServicesFields, UpdateServiceFields, ViewServiceForms } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
@@ -55,13 +55,17 @@ router.route("/system/update_branch").post(UpdateBranch);
 
 // counter management
 router.route("/system/create_counter").post(SetupCounter);
-router.route("/system/setup_counter_station").post(RegisterCounterStation);
+
 router.route("/system/view_counter").post(ViewCounters);
 router.route("/system/update_counter").post(UpdateCounter);
 
 router.route("/system/assign_service_to_counter").post(AssignServiceToCounter);
 router.route("/system/view_counter_services").post(ViewCounterServices);
 router.route("/system/update_counter_services").post(UpdateCounterServices);
+
+router.route("/system/setup_counter_station").post(RegisterCounterStation);
+router.route("/system/activate_counter_station").post(ActivateCounterStation);
+router.route("/system/view_counter_devices").post(ViewCounterStationDevices);
 
 
 // service management
