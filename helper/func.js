@@ -32,4 +32,35 @@ module.exports = {
 
 
     },
+    validateFormFields: (formFields, submittedData, parameter) => {
+        const errors = [];
+        const validatedFields = [];
+
+        // Extract submission content
+        const submittedFields = submittedData.content.submission_content;
+
+        // Loop through form fields to find those that match the parameter
+        formFields.forEach(field => {
+            if (field[parameter]) {
+                // Find the corresponding submitted field by field_id
+                const submittedField = submittedFields.find(sub => sub.field_id === field.field_id);
+
+                if (!submittedField) {
+                    errors.push(`Field ${field.label} is missing in the submission`);
+                } else {
+                    // Add custom validation logic here if needed
+                    validatedFields.push({
+                        field_id: field.field_id,
+                        label: field.label,
+                        response: submittedField.response
+                    });
+                }
+            }
+        });
+
+        return {
+            validatedFields,
+            errors
+        };
+    }
 }

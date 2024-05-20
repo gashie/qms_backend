@@ -6,9 +6,13 @@ let shopdb = {};
 
 
 
-shopdb.GenerateTicket = (branch_acronym,branch_id,service_id,customer_id,status,dispenser_id,form_id,submission_id) => {
+shopdb.findUniqueCustomer = (customer_id) => {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT generate_ticket('${branch_acronym}','${branch_id}','${service_id}','${customer_id}','${status}','${dispenser_id}','${form_id}','${submission_id}')`, [], (err, results) => {
+        pool.query(`
+        SELECT * FROM customers
+        WHERE email = $1 OR phone_number = $1;;
+    
+        `, [customer_id], (err, results) => {
             if (err) {
                 logger.error(err);
                 return reject(err);
@@ -18,4 +22,5 @@ shopdb.GenerateTicket = (branch_acronym,branch_id,service_id,customer_id,status,
         });
     });
 };
+
 module.exports = shopdb
