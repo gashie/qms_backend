@@ -2,8 +2,9 @@
 const GlobalModel = require("../model/Global");
 const licenseKey = require('license-key-gen');
 const { ShowMyDeviceTemplates } = require("../model/Templates");
-const { sendResponse, CatchHistory, sendCookie } = require("./utilfunc");
+const { sendResponse, CatchHistory, sendCookie, sendCounterCookie } = require("./utilfunc");
 const { SimpleDecrypt } = require("../helper/devicefuncs");
+const { findCounterDevices } = require("../model/Counter");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 const autoGenerateCookie = async (req, res, next, userIp) => {
 
@@ -70,5 +71,25 @@ const autoGenerateCookie = async (req, res, next, userIp) => {
         return next();
     }
 };
+const autoGenerateCounterCookie = async (req, res, next, userIp) => {
 
-module.exports = { autoGenerateCookie };
+    // Function implementation
+    let results = await findCounterDevices(userIp);
+    if (results.rows.length == 0) {
+        return sendResponse(res, 0, 200, "Sorry, seems this counter does not exist", [])
+    }
+    let counter_object = {
+        authentication_code: results.rows[0].authentication_code,
+        ip_address: results.rows[0].ip_address,
+        is_activated: results.rows[0].is_activated,
+        branch_id:results.rows[0].branch_id,
+        device_id:results.rows[0].device_id
+    }
+
+    sendCounterCookie(counter_object, 1, 200, res, req)
+    // Call next middleware
+    req.counter_info = counter_object;
+    return next();
+};
+
+module.exports = { autoGenerateCookie,autoGenerateCounterCookie };

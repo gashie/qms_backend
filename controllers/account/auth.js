@@ -153,6 +153,13 @@ exports.VerifyUser = asynHandler(async (req, res, next) => {
     return sendResponse(res, 1, 200, "Loggedin", userData)
 });
 
+exports.VerifyCounter = asynHandler(async (req, res, next) => {
+    let counterData = req.counter_info;
+    CatchHistory({ api_response: "User is verified", function_name: 'VerifyUser', date_started: systemDate, sql_action: "SELECT", event: "VERIFY USER TOKEN", actor: counterData.id }, req)
+
+    return sendResponse(res, 1, 200, "Loggedin", counterData)
+});
+
 
 exports.Logout = asynHandler(async (req, res, next) => {
     CatchHistory({ api_response: "User is logged out", function_name: 'Logout', date_started: systemDate, sql_action: "SELECT", event: "Logout", actor: req.user.id }, req)

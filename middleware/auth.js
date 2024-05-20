@@ -4,7 +4,7 @@ const { DetectDevice, DetectIp, MainDec } = require("../helper/devicefuncs")
 
 const asynHandler = require("../middleware/async");
 const { sendResponse, CatchHistory } = require("../helper/utilfunc");
-const { autoGenerateCookie } = require("../helper/auto");
+const { autoGenerateCookie, autoGenerateCounterCookie } = require("../helper/auto");
 
 dotenv.config({ path: "./config/config.env" });
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -69,12 +69,11 @@ exports.protectCounter = asynHandler(async (req, res, next) => {
         } else if (req?.cookies?.cid) {
             token = req?.cookies?.cid;
         }
-    
         //make sure token exists
         if (!token) {
             console.log('no token, Generate new');
             try {
-                return await autoGenerateCookie(req, res,next,userIp); // Call autoGenerateCookie function
+                return await autoGenerateCounterCookie(req, res,next,userIp); // Call autoGenerateCookie function
                 // return next();
             } catch (error) {
                 console.error('Error generating cookie:', error);

@@ -3,12 +3,12 @@ const router = express.Router();
 // const { userLogin } = require('../middleware/validator')
 // const { protect } = require('../middleware/auth')
 const { CreateSystemRole, ViewSystemRole, UpdateSystemRole, CreateSystemPermission, ViewSystemPermission, UpdateSystemPermission, CreateRolePermission, ViewRolePermission, CreateSystemRoute } = require("../controllers/system/user_management");
-const { VerifyUser, Logout, UserAuth } = require("../controllers/account/auth");
-const { protect } = require("../middleware/auth");
+const { VerifyUser, Logout, UserAuth, VerifyCounter } = require("../controllers/account/auth");
+const { protect, protectCounter } = require("../middleware/auth");
 const { SetupCompany, UpdateCompany, ViewCompany } = require("../controllers/company/manage");
 const { CreateSystemUser, CreateTellers } = require("../controllers/account/signup");
 const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch/manage");
-const { SetupCounter, ViewCounters, UpdateCounter, AssignServiceToCounter, ViewCounterServices, UpdateCounterServices, RegisterCounterStation, ActivateCounterStation, ViewCounterStationDevices } = require("../controllers/counter/manage");
+const { SetupCounter, ViewCounters, UpdateCounter, AssignServiceToCounter, ViewCounterServices, UpdateCounterServices, RegisterCounterStation, ActivateCounterStation, ViewCounterStationDevices, RevokeCounterStation } = require("../controllers/counter/manage");
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
 const { AssignServiceToForm, SearchServicesFields, UpdateServiceFields, ViewServiceForms } = require("../controllers/services/manage_servicefields");
 const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
@@ -66,6 +66,7 @@ router.route("/system/update_counter_services").post(UpdateCounterServices);
 router.route("/system/setup_counter_station").post(RegisterCounterStation);
 router.route("/system/activate_counter_station").post(ActivateCounterStation);
 router.route("/system/view_counter_devices").post(ViewCounterStationDevices);
+router.route("/system/revoke_counter_devices").post(RevokeCounterStation);
 
 
 // service management
@@ -119,6 +120,7 @@ router.route("/system/show_currently_serving").post(protectUser,ShowCounterServi
 
 //user login auth
 router.route("/auth").post(protectUser, VerifyUser);
+router.route("/counter_auth").post(protectCounter, VerifyCounter);
 router.route("/user_login").post(UserAuth);
 router.route("/logout").post(protect, Logout);
 module.exports = router;

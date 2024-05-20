@@ -101,7 +101,6 @@ module.exports = {
        return res
         .status(code)
         .cookie("cid", accessToken, options)
-        .json({ status: 1, message: "Counter activated successfully" });
     },
     clearResponse: (req, res) => {
         const cookies = req.cookies

@@ -2,7 +2,7 @@ const asynHandler = require("../../middleware/async");
 const voucher_codes = require('voucher-code-generator');
 const { sendResponse, CatchHistory, sendCounterCookie } = require("../../helper/utilfunc");
 const GlobalModel = require("../../model/Global");
-const { counterServices, counterDevices } = require("../../model/Counter");
+const { counterServices, counterDevices, deleteCounterDevice, deleteAssignedCounter } = require("../../model/Counter");
 const { DetectIp } = require("../../helper/devicefuncs");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
@@ -183,7 +183,9 @@ exports.ActivateCounterStation = asynHandler(async (req, res, next) => {
        let counter_object = {
         authentication_code:authentication_code,
         ip_address:payload.ip_address,
-        is_activated:payload.is_activated
+        is_activated:payload.is_activated,
+        branch_id:results.rows[0].branch_id,
+        device_id:results.rows[0].device_id
        }
         return sendCounterCookie(counter_object, 1, 200, res, req)
 
@@ -202,4 +204,16 @@ exports.ViewCounterStationDevices = asynHandler(async (req, res, next) => {
         return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
     }
     sendResponse(res, 1, 200, "Record Found", results.rows)
+})
+
+exports.RevokeCounterStation = asynHandler(async (req, res, next) => {
+    // let userData = req.user;
+    let {device_id} = req.body
+
+    let assigned_results = await deleteAssignedCounter(device_id);
+    if (assigned_results.rowCount == 1) {
+        let device_results = await deleteCounterDevice(device_id);
+        sendResponse(res, 1, 200, "Record revoked successfully", )
+    }
+    return sendResponse(res, 0, 200, "Sorry, No Record Found to revoke", [])
 })

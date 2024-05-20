@@ -122,4 +122,62 @@ shopdb.counterDevices = () => {
         });
     });
 };
+shopdb.findCounterDevices = (ip_address) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`
+        SELECT 
+        d.device_id,
+        d.branch_id,
+        d.device_name,
+        d.device_type,
+        d.ip_address,
+        b.name AS branch_name,
+        c.name AS counter_name,
+        d.authentication_code,
+        d.is_activated
+
+    FROM 
+        public.counter_assignments ca
+    JOIN 
+        public.devices d ON ca.device_id = d.device_id
+    JOIN 
+        public.branch b ON ca.branch_id = b.branch_id
+    JOIN 
+        public.counter c ON ca.counter_id = c.counter_id
+        WHERE d.ip_address = $1
+    
+        `, [ip_address], (err, results) => {
+            if (err) {
+                logger.error(err);
+                return reject(err);
+            }
+
+            return resolve(results);
+        });
+    });
+};
+shopdb.deleteCounterDevice= (device_id) => {
+    return new Promise((resolve, reject) => {
+        pool.query("DELETE FROM devices WHERE device_id = $1", [device_id], (err, results) => {
+            if (err) {
+                logger.error(err);
+                return reject(err);
+            }
+
+            return resolve(results);
+        });
+    });
+};
+shopdb.deleteAssignedCounter= (device_id) => {
+    return new Promise((resolve, reject) => {
+        pool.query("DELETE FROM counter_assignments WHERE device_id = $1", [device_id], (err, results) => {
+            if (err) {
+                logger.error(err);
+                return reject(err);
+            }
+
+            return resolve(results);
+        });
+    });
+};
 module.exports = shopdb

@@ -101,3 +101,6 @@ ON ticket
 FOR EACH ROW
 WHEN (OLD.status != 'Served' AND NEW.status = 'Served')
 EXECUTE FUNCTION update_ticket_position();
+
+
+CREATE SEQUENCE queue_item_position_seq;
