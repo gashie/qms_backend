@@ -120,7 +120,7 @@ exports.GenerateNewTicket = asynHandler(async (req, res, next) => {
     // Check if the query returned the expected data
     if (saved_submission.rowCount === 1) {
         let submission_id = saved_submission.rows[0].submission_id;
-        let refresult = await GenerateTicket(acronym,branch_id,service_id,customer_id,status,dispenser_id,form_id,submission_id);
+        let refresult = await GenerateTicket(acronym,device.branch_id,service_id,customer_id,status,dispenser_id,form_id,submission_id);
         if (refresult.rowCount == 1) {
             return sendResponse(res, 1, 200, "Ticket generated", refresult.rows)
         } else {
