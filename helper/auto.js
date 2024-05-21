@@ -80,6 +80,7 @@ const autoGenerateCounterCookie = async (req, res, next, userIp) => {
     }
     let counter_object = {
         authentication_code: results.rows[0].authentication_code,
+        counter_id : results.rows[0].counter_id,
         ip_address: results.rows[0].ip_address,
         is_activated: results.rows[0].is_activated,
         branch_id:results.rows[0].branch_id,

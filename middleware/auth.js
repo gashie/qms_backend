@@ -84,11 +84,16 @@ exports.protectCounter = asynHandler(async (req, res, next) => {
         // Verify token
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         let tokenInfo = decoded.EncUserInfo;
+
+
         let decryptToken = MainDec(tokenInfo);
         let checkIp = decryptToken?.devirb;
     
         if (checkIp === userIp) {
             req.counter_info = decryptToken;
+            console.log('====================================');
+            console.log('cinfo',req.counter_info);
+            console.log('====================================');
             return next();
         } else {
             console.log('IPCheck =', checkIp === userIp);

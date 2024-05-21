@@ -1,8 +1,8 @@
 const asynHandler = require("../../middleware/async");
 const voucher_codes = require('voucher-code-generator');
-const { sendResponse, CatchHistory, sendCounterCookie } = require("../../helper/utilfunc");
+const { sendResponse, CatchHistory, sendCounterCookie, sendFirstCounterCookie } = require("../../helper/utilfunc");
 const GlobalModel = require("../../model/Global");
-const { counterServices, counterDevices, deleteCounterDevice, deleteAssignedCounter } = require("../../model/Counter");
+const { counterServices, counterDevices, deleteCounterDevice, deleteAssignedCounter, findCounterDevicesForActivation } = require("../../model/Counter");
 const { DetectIp } = require("../../helper/devicefuncs");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
@@ -132,7 +132,7 @@ exports.RegisterCounterStation = asynHandler(async (req, res, next) => {
         count: 1,
         charset: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     });
-    
+
     let devicePayload = {
         branch_id: counterInfo.branch_id,
         device_name: payload.name,
@@ -160,19 +160,21 @@ exports.RegisterCounterStation = asynHandler(async (req, res, next) => {
 exports.ActivateCounterStation = asynHandler(async (req, res, next) => {
     let { authentication_code } = req.body
     let payload = {};
-    const tableName = 'devices';
-    const columnsToSelect = []; // Use string values for column names
-    const ServiceConditions = [
-        { column: 'authentication_code', operator: '=', value: authentication_code },
-        { column: 'is_activated', operator: '=', value: false },
-        { column: 'activation_status', operator: '=', value: 'pending' },
-    ];
-    let results = await GlobalModel.Finder(tableName, columnsToSelect, ServiceConditions)
+
+    let results = await findCounterDevicesForActivation(authentication_code, false, 'pending');
     if (results.rows.length == 0) {
-        return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
+        return sendResponse(res, 0, 200, "Sorry, seems this counter has not been created", [])
+    }
+    let counter_object = {
+        authentication_code: results.rows[0].authentication_code,
+        counter_id: results.rows[0].counter_id,
+        ip_address: results.rows[0].ip_address,
+        is_activated: results.rows[0].is_activated,
+        branch_id: results.rows[0].branch_id,
+        device_id: results.rows[0].device_id
     }
 
-    payload.ip_address =  DetectIp(req);
+    payload.ip_address = DetectIp(req);
     payload.is_activated = true
     payload.activation_status = 'activated'
     payload.updated_at = systemDate
@@ -180,14 +182,7 @@ exports.ActivateCounterStation = asynHandler(async (req, res, next) => {
 
     const runupdate = await GlobalModel.Update(payload, 'devices', 'device_id', results.rows[0].device_id)
     if (runupdate.rowCount == 1) {
-       let counter_object = {
-        authentication_code:authentication_code,
-        ip_address:payload.ip_address,
-        is_activated:payload.is_activated,
-        branch_id:results.rows[0].branch_id,
-        device_id:results.rows[0].device_id
-       }
-        return sendCounterCookie(counter_object, 1, 200, res, req)
+        return sendFirstCounterCookie(counter_object, 1, 200, res, req)
 
 
     } else {
@@ -208,12 +203,12 @@ exports.ViewCounterStationDevices = asynHandler(async (req, res, next) => {
 
 exports.RevokeCounterStation = asynHandler(async (req, res, next) => {
     // let userData = req.user;
-    let {device_id} = req.body
+    let { device_id } = req.body
 
     let assigned_results = await deleteAssignedCounter(device_id);
     if (assigned_results.rowCount == 1) {
         let device_results = await deleteCounterDevice(device_id);
-        sendResponse(res, 1, 200, "Record revoked successfully", )
+        sendResponse(res, 1, 200, "Record revoked successfully",)
     }
     return sendResponse(res, 0, 200, "Sorry, No Record Found to revoke", [])
 })

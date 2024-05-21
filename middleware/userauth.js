@@ -39,6 +39,9 @@ exports.protectUser = asynHandler(async (req, res, next) => {
 
             // if (checkIp === userIp && checkDevice === device) {
             req.user = decryptToken;
+            console.log('====================================');
+            console.log('req.user',req.user);
+            console.log('====================================');
             return next()
         } else {
             // console.log('DeviceCheck =', checkDevice === device);

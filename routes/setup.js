@@ -17,7 +17,7 @@ const { OpenDisplayView } = require("../controllers/devices/view");
 const { SetupForm, ViewForms, UpdateForm, SetupFormFields, SearchFormFields, UpdateFormFields } = require("../controllers/form/manage");
 const { GenerateNewTicket } = require("../controllers/ticket/manage");
 const { protectUser } = require("../middleware/userauth");
-const { ListPendingTicket, ProcessTicket, ShowCounterServing } = require("../controllers/ticket/process");
+const { ListPendingTicket, ProcessTicket, ShowCounterServing, CallPendingTicket } = require("../controllers/ticket/process");
 
 
 //routes
@@ -114,9 +114,10 @@ router.route("/system/open_displayview").post(protect,OpenDisplayView);
 
 //tickets
 router.route("/system/generate_ticket").post(protect,GenerateNewTicket);
-router.route("/system/pending_ticket").post(protectUser,ListPendingTicket);
-router.route("/system/process_ticket").post(protectUser,ProcessTicket);
-router.route("/system/show_currently_serving").post(protectUser,ShowCounterServing);
+router.route("/system/pending_ticket").post(protectUser,protectCounter,ListPendingTicket);
+router.route("/system/call_pending_ticket").post(protectUser,protectCounter,CallPendingTicket);
+router.route("/system/process_ticket").post(protectUser,protectCounter,ProcessTicket);
+router.route("/system/show_currently_serving").post(protectUser,protectCounter,ShowCounterServing);
 
 //user login auth
 router.route("/auth").post(protectUser, VerifyUser);

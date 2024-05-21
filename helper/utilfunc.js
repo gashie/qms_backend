@@ -80,6 +80,29 @@ module.exports = {
         .cookie("tid", accessToken, options)
         .json({ status: 1, message: "Logged in" });
     },
+    sendFirstCounterCookie: async (UserInfo, status, code, res, req) => {
+        // let device = await DetectDevice(req.headers['user-agent'], req)
+        let userIp = DetectIp(req)
+        // UserInfo.devcrb = device
+        UserInfo.devirb = userIp
+        let EncUserInfo = MainEnc(UserInfo)  //encrypt entire user information
+        const accessToken = jwt.sign({ EncUserInfo }, process.env.ACCESS_TOKEN_SECRET)
+
+        // // Create secure cookie with refresh token 
+        const options =  {
+            httpOnly: true, //accessible only by web server 
+            secure: false, //https
+            // sameSite: 'None', //cross-site cookie 
+            // maxAge: 1 * 24 * 60 * 60 * 1000 //cookie expiry: set to match rT
+        }
+        logger.info('Counter activated successfully')
+
+        // })
+       return res
+        .status(code)
+        .cookie("cid", accessToken, options)
+        .json({ status: 1, message: "Counter activated successfully" });
+    },
     sendCounterCookie: async (UserInfo, status, code, res, req) => {
         // let device = await DetectDevice(req.headers['user-agent'], req)
         let userIp = DetectIp(req)
