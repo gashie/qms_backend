@@ -10,8 +10,9 @@ const { findUniqueCustomer } = require("../../model/Customer");
 const systemDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
 exports.GenerateNewTicket = asynHandler(async (req, res, next) => {
+    let device = req.device_template
 
-    let { branch_acronym, branch_id, service_id, dispenser_id, form_id, content } = req.body
+    let { service_id, form_id, content } = req.body
     /**
  * Create new company.
  * @param {string} name - Name or title of the branch.
@@ -30,7 +31,7 @@ exports.GenerateNewTicket = asynHandler(async (req, res, next) => {
     const tableNameTwo = 'branch';
     const columnsToSelectTwo = []; // Use string values for column names
     const ServiceConditionsTwo = [
-        { column: 'branch_id', operator: '=', value: branch_id },
+        { column: 'branch_id', operator: '=', value: device.branch_id },
     ];
     let branch_result = await GlobalModel.Finder(tableNameTwo, columnsToSelectTwo, ServiceConditionsTwo)
 
@@ -93,16 +94,14 @@ exports.GenerateNewTicket = asynHandler(async (req, res, next) => {
     //create submission payload
 
 
-    // let refresult = await GenerateTicket(branch_acronym,branch_id,service_id,customer_id,status,dispenser_id,form_id);
-    // res.send(refresult.rows[0])
 
     customerPayload.customer_id = customer_id
 
     let submission = {
         form_id,
         service_id,
-        branch_id,
-        dispenser_id,
+        branch_id:device.branch_id,
+        dispenser_id:device.device_id,
         unique_field: unique,
         remarks,
         receipt,
