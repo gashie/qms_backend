@@ -89,6 +89,34 @@ exports.ViewRegisteredDevices = asynHandler(async (req, res, next) => {
     sendResponse(res, 1, 200, "Record Found", results.rows)
 })
 
+exports.ViewDevices = asynHandler(async (req, res, next) => {
+    // let userData = req.user;
+
+    const tableName = 'devices';
+    const columnsToSelect = []; // Use string values for column names
+    const conditions = [
+    ];
+    let results = await GlobalModel.Finder(tableName, columnsToSelect, conditions)
+    if (results.rows.length == 0) {
+        return sendResponse(res, 0, 200, "Sorry, No Record Found", [])
+    }
+    sendResponse(res, 1, 200, "Record Found", results.rows)
+})
+
+exports.UpdateDevices = asynHandler(async (req, res, next) => {
+    let payload = req.body;
+    payload.updated_at = systemDate
+
+    const runupdate = await GlobalModel.Update(payload, 'devices', 'device_id', payload.device_id)
+    if (runupdate.rowCount == 1) {
+        return sendResponse(res, 1, 200, "Record Updated", runupdate.rows[0])
+
+
+    } else {
+        return sendResponse(res, 0, 200, "Update failed, please try later", [])
+    }
+})
+
 
 
 exports.UpdateRegisteredDevices = asynHandler(async (req, res, next) => {

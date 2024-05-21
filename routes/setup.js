@@ -11,7 +11,7 @@ const { SetupBranch, ViewBranch, UpdateBranch } = require("../controllers/branch
 const { SetupCounter, ViewCounters, UpdateCounter, AssignServiceToCounter, ViewCounterServices, UpdateCounterServices, RegisterCounterStation, ActivateCounterStation, ViewCounterStationDevices, RevokeCounterStation } = require("../controllers/counter/manage");
 const { SetupService, ViewServices, UpdateService, SearchServices } = require("../controllers/services/manage");
 const { AssignServiceToForm, SearchServicesFields, UpdateServiceFields, ViewServiceForms } = require("../controllers/services/manage_servicefields");
-const { RegisterDevice, ActivateDevice } = require("../controllers/devices/manage");
+const { RegisterDevice, ActivateDevice, ViewDevices, UpdateDevices } = require("../controllers/devices/manage");
 const { CreateDispenserTemplate, AssignTemplateToDispenser, UpdateDispenserTemplate, UpdateAssignedTemplate, ViewAssignedTemplate, ViewDispenserTemplate, SetupTemplateExchangeRate, ViewTemplateExchangeRate, UpdateTemplateExchangeRate, UpdateDispenserCarouselTemplate } = require("../controllers/devices/dispenser");
 const { OpenDisplayView } = require("../controllers/devices/view");
 const { SetupForm, ViewForms, UpdateForm, SetupFormFields, SearchFormFields, UpdateFormFields } = require("../controllers/form/manage");
@@ -95,7 +95,8 @@ router.route("/system/update_service_form").post(UpdateServiceFields);
 // manage devices
 router.route("/system/register_device").post(RegisterDevice);
 router.route("/system/activate_device").post(ActivateDevice);
-
+router.route("/system/view_devices").post(ViewDevices);
+router.route("/system/update_device").post(UpdateDevices);
 //device template
 //--->dispenser
 router.route("/system/create_dispenser_template").post(CreateDispenserTemplate);
